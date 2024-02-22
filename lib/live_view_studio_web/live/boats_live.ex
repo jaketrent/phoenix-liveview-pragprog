@@ -2,6 +2,7 @@ defmodule LiveViewStudioWeb.BoatsLive do
   use LiveViewStudioWeb, :live_view
 
   alias LiveViewStudio.Boats
+  import LiveViewStudioWeb.CustomComponents, only: [promo: 1]
 
   def mount(_params, _session, socket) do
     socket =
@@ -69,27 +70,6 @@ defmodule LiveViewStudioWeb.BoatsLive do
         <Heroicons.exclamation_circle /> Excluding weekends
       </:legal>
     </.promo>
-    """
-  end
-
-  # , default: 24
-  attr :expiration, :integer, required: true
-  slot :inner_block, required: true
-  slot :legal
-
-  def promo(assigns) do
-    ~H"""
-    <div class="promo">
-      <div class="deal">
-        <%= render_slot(@inner_block) %>
-      </div>
-      <div class="expiration">
-        Deal expires in <%= @expiration %> hours
-      </div>
-      <div :if={assigns[:legal]} class="legal">
-        <%= render_slot(@legal) %>
-      </div>
-    </div>
     """
   end
 
