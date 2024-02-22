@@ -17,6 +17,9 @@ defmodule LiveViewStudioWeb.BoatsLive do
   def render(assigns) do
     ~H"""
     <h1>Daily Boat Rentals</h1>
+    <.promo expiration={2}>
+      Save 25% on rentals
+    </.promo>
     <div id="boats">
       <form phx-change="filter">
         <div class="filters">
@@ -58,6 +61,33 @@ defmodule LiveViewStudioWeb.BoatsLive do
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <.promo expiration={1}>
+      Hurry, act now
+      <:legal>
+        <Heroicons.exclamation_circle /> Excluding weekends
+      </:legal>
+    </.promo>
+    """
+  end
+
+  # , default: 24
+  attr :expiration, :integer, required: true
+  slot :inner_block, required: true
+  slot :legal
+
+  def promo(assigns) do
+    ~H"""
+    <div class="promo">
+      <div class="deal">
+        <%= render_slot(@inner_block) %>
+      </div>
+      <div class="expiration">
+        Deal expires in <%= @expiration %> hours
+      </div>
+      <div :if={assigns[:legal]} class="legal">
+        <%= render_slot(@legal) %>
       </div>
     </div>
     """
