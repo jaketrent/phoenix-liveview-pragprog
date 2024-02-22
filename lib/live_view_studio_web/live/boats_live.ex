@@ -10,14 +10,15 @@ defmodule LiveViewStudioWeb.BoatsLive do
         boats: Boats.list_boats()
       )
 
-    {:ok, socket}
+    # frees up memory from static data, after render
+    {:ok, socket, temporary_assigns: [boats: []]}
   end
 
   def render(assigns) do
     ~H"""
     <h1>Daily Boat Rentals</h1>
     <div id="boats">
-      <form>
+      <form phx-change="filter">
         <div class="filters">
           <select name="type">
             <%= Phoenix.HTML.Form.options_for_select(
@@ -69,5 +70,11 @@ defmodule LiveViewStudioWeb.BoatsLive do
       Sporting: "sporting",
       Sailing: "sailing"
     ]
+  end
+
+  def handle_event("filter", %{"type" => type, "prices" => prices}, socket) do
+    filter = %{type: type, prices: prices}
+    boats = Boats.list_boats(filter)
+    {:noreply, assign(socket, boats: boats, filter: filter)}
   end
 end
