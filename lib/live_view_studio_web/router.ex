@@ -10,11 +10,19 @@ defmodule LiveViewStudioWeb.Router do
     plug :put_root_layout, html: {LiveViewStudioWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    # added by mix.gen.auth
     plug :fetch_current_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/", LiveViewStudioWeb do
+    # this plug from mix.gen.auth
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/topsecret", TopSecretLive
   end
 
   scope "/", LiveViewStudioWeb do
@@ -30,7 +38,6 @@ defmodule LiveViewStudioWeb.Router do
     live "/servers", ServersLive
     live "/donations", DonationsLive
     live "/volunteers", VolunteersLive
-    live "/topsecret", TopSecretLive
     live "/presence", PresenceLive
     live "/bookings", BookingsLive
     live "/shop", ShopLive

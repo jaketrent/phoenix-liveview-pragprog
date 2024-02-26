@@ -1,7 +1,7 @@
 defmodule LiveViewStudioWeb.TopSecretLive do
   use LiveViewStudioWeb, :live_view
 
-  # logged in for socket
+  # auth check for websocket
   on_mount {LiveViewStudioWeb.UserAuth, :ensure_authenticated}
 
   def mount(_params, _session, socket) do
