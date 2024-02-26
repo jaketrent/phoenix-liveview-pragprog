@@ -22,7 +22,12 @@ defmodule LiveViewStudioWeb.Router do
     # this plug from mix.gen.auth
     pipe_through [:browser, :require_authenticated_user]
 
-    live "/topsecret", TopSecretLive
+    # auth check for websocket
+    # share websocket conn with redirs
+    live_session :authenticated, on_mount: {LiveViewStudioWeb.UserAuth, :ensure_authenticated} do
+      live "/topsecret", TopSecretLive
+      live "/presence", PresenceLive
+    end
   end
 
   scope "/", LiveViewStudioWeb do
@@ -38,7 +43,6 @@ defmodule LiveViewStudioWeb.Router do
     live "/servers", ServersLive
     live "/donations", DonationsLive
     live "/volunteers", VolunteersLive
-    live "/presence", PresenceLive
     live "/bookings", BookingsLive
     live "/shop", ShopLive
     live "/juggling", JugglingLive
