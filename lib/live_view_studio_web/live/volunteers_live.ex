@@ -2,13 +2,17 @@ defmodule LiveViewStudioWeb.VolunteersLive do
   use LiveViewStudioWeb, :live_view
 
   alias LiveViewStudio.Volunteers
+  alias LiveViewStudio.Volunteers.Volunteer
 
   def mount(_params, _session, socket) do
     volunteers = Volunteers.list_volunteers()
 
+    changeset = Volunteers.change_volunteer(%Volunteer{})
+
     socket =
       assign(socket,
-        volunteers: volunteers
+        volunteers: volunteers,
+        form: to_form(changeset)
       )
 
     {:ok, socket}
@@ -18,6 +22,20 @@ defmodule LiveViewStudioWeb.VolunteersLive do
     ~H"""
     <h1>Volunteer Check-In</h1>
     <div id="volunteer-checkin">
+      <.form for={@form} phx-submit="save">
+        <.input field={@form[:name]} placeholder="Name" autocomplete="off" />
+        <.input
+          field={@form[:phone]}
+          type="tel"
+          placeholder="Phone"
+          autocomplete="off"
+        />
+        <.button phx-disable-with="Saving...">Check In</.button>
+      </.form>
+
+      <pre>
+        <%#= inspect @form, pretty: true %>
+      </pre>
       <div
         :for={volunteer <- @volunteers}
         class={"volunteer #{if volunteer.checked_out, do: "out"}"}
@@ -36,5 +54,22 @@ defmodule LiveViewStudioWeb.VolunteersLive do
       </div>
     </div>
     """
+  end
+
+  def handle_event("save", %{"volunteer" => volunteer_params}, socket) do
+    case Volunteers.create_volunteer(volunteer_params) do
+      {:error, changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+
+      {:ok, volunteer} ->
+        socket =
+          update(
+            socket,
+            :volunteers,
+            fn volunteers -> [volunteer | volunteers] end
+          )
+
+        {:noreply, assign(socket, form: to_form(Volunteers.change_volunteer(%Volunteer{})))}
+    end
   end
 end
