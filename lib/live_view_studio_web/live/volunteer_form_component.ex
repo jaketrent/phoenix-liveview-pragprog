@@ -43,10 +43,7 @@ defmodule LiveViewStudioWeb.VolunteerFormComponent do
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
 
-      {:ok, volunteer} ->
-        # send new volunteer to parent = self() is pid of liveview
-        send(self(), {:volunteer_created, volunteer})
-
+      {:ok, _volunteer} ->
         # set form to re-render it as cleared
         {:noreply, assign(socket, form: to_form(Volunteers.change_volunteer(%Volunteer{})))}
     end
