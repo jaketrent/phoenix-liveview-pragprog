@@ -32,7 +32,6 @@ const hooks = {
         inline: true,
         mode: "range",
         showMonths: 2,
-        disable: JSON.parse(this.el.dataset.unavailableDates),
         onChange: (selectedDates) => {
           if (selectedDates.length !== 2) return;
 
@@ -42,6 +41,10 @@ const hooks = {
 
       this.handleEvent("add-unavailable-dates", (dates) => {
         this.pickr.set("disable", [dates, ...this.pickr.config.disable]);
+      });
+
+      this.pushEvent("unavailable-dates", {}, (reply, _ref) => {
+        this.pickr.set("disable", reply.dates);
       });
     },
     destroyed() {
