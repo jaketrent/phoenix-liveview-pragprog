@@ -12,6 +12,13 @@ defmodule LiveViewStudioWeb.DesksLive do
         form: to_form(Desks.change_desk(%Desk{}))
       )
 
+    socket =
+      allow_upload(socket, :photos,
+        accept: ~w(.png .jpg .jpeg),
+        max_entries: 3,
+        max_file_size: 2_000_000
+      )
+
     {:ok, stream(socket, :desks, Desks.list_desks())}
   end
 
@@ -22,6 +29,10 @@ defmodule LiveViewStudioWeb.DesksLive do
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("cancel", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :photos, ref)}
   end
 
   def handle_event("save", %{"desk" => params}, socket) do
