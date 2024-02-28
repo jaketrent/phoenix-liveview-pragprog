@@ -23,6 +23,7 @@ import { LiveSocket } from "phoenix_live_view";
 
 import flatpickr from "../vendor/flatpickr";
 import topbar from "../vendor/topbar";
+import uploaders from "./uploaders.js";
 
 const hooks = {
   Calendar: {
@@ -60,6 +61,7 @@ let csrfToken = document
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks,
+  uploaders,
 });
 
 // Show progress bar on live navigation and form submits
